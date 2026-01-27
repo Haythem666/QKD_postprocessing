@@ -1,4 +1,17 @@
-.venv/
-raw_data/*.csv
+# Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+
+# Data files
+raw_data/
+*.csv
+
+# OS / editor
+.DS_Store
+.vscode/

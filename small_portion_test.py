@@ -28,13 +28,13 @@ def main():
         return
     
     # Error correction using Cascade
-    corrected_bob_key, leaked_bits, corrected_errors = cascade_error_protocol(alice_key, bob_key, qber)
+    corrected_bob_key, leaked_bits, corrected_errors, final_errors = cascade_error_protocol(alice_key, bob_key, qber)
 
-    remaining_errors = np.sum(alice_key != corrected_bob_key)
+    #remaining_errors = np.sum(alice_key != corrected_bob_key)
 
     print("\n--- Cascade Error Correction ---")
     print("Corrected errors:", corrected_errors)
-    print("Remaining errors:", remaining_errors)
+    print("Remaining errors:", final_errors)
     print("Leaked bits:", leaked_bits)
 
 if __name__ == "__main__":

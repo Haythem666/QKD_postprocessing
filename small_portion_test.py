@@ -5,6 +5,7 @@ import numpy as np
 from qkd.sifting import sifting
 from qkd.parameter_estimation import parameter_estimation
 from qkd.cascade import cascade_error_protocol
+from qkd.privacy_amplification import toeplitz_hash, binary_entropy
 
 
 QBER_THRESHOLD = 0.11
@@ -36,6 +37,34 @@ def main():
     print("Corrected errors:", corrected_errors)
     print("Remaining errors:", final_errors)
     print("Leaked bits:", leaked_bits)
+
+    # Privacy amplification using Toeplitz hashing
+
+    h_qber = binary_entropy(qber_high)
+
+    n = len(alice_key)
+    safety_margin = 50
+    final_key_length = int(
+        n
+        - leaked_bits
+        - n * h_qber
+        - safety_margin
+    )
+
+    final_key_length = max(0, final_key_length)
+
+    print("\n--- Privacy Amplification ---")
+    print("Final secure key length:", final_key_length)
+
+    if final_key_length == 0:
+        print("ABORT: No secure key can be extracted")
+        return
+
+    alice_secure_key, toeplitz_seed = toeplitz_hash(alice_key, final_key_length)
+    bob_secure_key, _ = toeplitz_hash(corrected_bob_key, final_key_length, seed=toeplitz_seed)
+
+    print("Keys identical after PA:", np.array_equal(alice_secure_key, bob_secure_key))
+
 
 if __name__ == "__main__":
     main()

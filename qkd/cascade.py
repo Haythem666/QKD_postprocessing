@@ -55,7 +55,7 @@ def cascade_iteration(alice_key, bob_key, block_size, permutation=None):
     return corrected_bob, leaked_bits, corrected_errors
 
 
-def cascade_error_protocol(alice_key, bob_key, qber, iterations=4):
+def cascade_error_protocol(alice_key, bob_key, qber, iterations=16):
     
     n = len(alice_key)
     corrected_bob = bob_key.copy()

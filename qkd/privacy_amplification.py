@@ -16,6 +16,6 @@ def toeplitz_hash(key, output_length, seed=None):
     hashed_key = np.zeros(output_length, dtype=np.uint8)
 
     for i in range(output_length):
-        hashed_key[i] = np.sum(seed[i:i + n] & key) % 2
+        hashed_key[i] = np.sum(seed[i:i + n] * key) % 2
 
     return hashed_key,seed

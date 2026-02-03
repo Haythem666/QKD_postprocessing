@@ -6,6 +6,7 @@ from qkd.sifting import sifting
 from qkd.parameter_estimation import parameter_estimation
 from qkd.cascade import cascade_error_protocol
 from qkd.privacy_amplification import toeplitz_hash, binary_entropy
+from qkd.cascade_wrapper import cascade_opensource
 
 
 QBER_THRESHOLD = 0.11
@@ -28,16 +29,41 @@ def main():
         print("ABORT protocol: QBER too high")
         return
     
-    # Error correction using Cascade
-    corrected_bob_key, leaked_bits, corrected_errors, final_errors = cascade_error_protocol(alice_key, bob_key, qber)
+    print("\n--- Cascade Error Correction (Open Source) ---")
 
-    #remaining_errors = np.sum(alice_key != corrected_bob_key)
+    # Test all available Cascade algorithms
+    algorithms = [
+        'original',   # Cascade orig. (4 passes)
+        'biconf',     # Cascade mod. (1) - BICONF
+        'yanetal',    # Cascade opt. (2) - Yan et al.
+        'option3',    # Cascade opt. (3) - 16 passes
+        'option4',    # Cascade opt. (4) - reuse
+        'option7',    # Cascade opt. (7) - optimized
+        'option8'     # Cascade opt. (8) - best
+    ]
+    
+    for algo in algorithms:
+        print(f"\n{'='*60}")
+        print(f"Testing: {algo}")
+        print('='*60)
+        corrected_bob_key, leaked_bits, final_errors, stats = cascade_opensource(
+            alice_key.copy(), bob_key.copy(), qber, algorithm=algo, verbose=True
+        )
 
-    print("\n--- Cascade Error Correction ---")
-    print("Corrected errors:", corrected_errors)
-    print("Remaining errors:", final_errors)
-    print("Leaked bits:", leaked_bits)
+        print("Remaining errors:", final_errors)
+        #print("Corrected errors:", corrected_errors)
+        print("Leaked bits:", leaked_bits)
+        print(f"Efficiency: {stats.realistic_efficiency:.2f}")
 
+        if final_errors == 0:
+            print(f"  ✓ Success with {algo}!")
+            #break
+
+    if final_errors > 0:
+        print(f"\n ABORT: {final_errors} errors remain after Cascade")
+        print("Cannot proceed to Privacy Amplification with different keys")
+        return
+    
     # Privacy amplification using Toeplitz hashing
 
     h_qber = binary_entropy(qber_high)

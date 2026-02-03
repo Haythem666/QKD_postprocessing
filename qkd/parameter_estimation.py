@@ -1,7 +1,6 @@
 import numpy as np
 import math
 
-import qber
 
 CONFIDENCE_Z = 3 # 99.7% confidence interval
 SAMPLE_RATIO = 0.1 # 10% sample for parameter estimation

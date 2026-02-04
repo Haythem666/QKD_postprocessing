@@ -4,7 +4,6 @@ import numpy as np
 
 from qkd.sifting import sifting
 from qkd.parameter_estimation import parameter_estimation
-from qkd.cascade import cascade_error_protocol
 from qkd.privacy_amplification import toeplitz_hash, binary_entropy
 from qkd.cascade_wrapper import cascade_opensource
 
@@ -51,7 +50,6 @@ def main():
         )
 
         print("Remaining errors:", final_errors)
-        #print("Corrected errors:", corrected_errors)
         print("Leaked bits:", leaked_bits)
         print(f"Efficiency: {stats.realistic_efficiency:.2f}")
 
@@ -65,7 +63,6 @@ def main():
         return
     
     # Privacy amplification using Toeplitz hashing
-
     h_qber = binary_entropy(qber_high)
 
     n = len(alice_key)

@@ -4,9 +4,6 @@ def sifting(df):
 
     print("Initial raw size:", len(df))
 
-    #df = df.sort_values("qubit_id").reset_index(drop=True)
-
-
     sifted = df[df["matching_basis"] == True]
 
     alice_bits = sifted["tx_state"].to_numpy(dtype=np.uint8)

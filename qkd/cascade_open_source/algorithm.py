@@ -9,7 +9,7 @@ class Algorithm:
 
     def __init__(self, name, cascade_iterations, block_size_function, biconf_iterations,
                  biconf_error_free_streak, biconf_correct_complement, biconf_cascade,
-                 sub_block_reuse, block_parity_inference):
+                 sub_block_reuse):
         """
         Create a new Cascade algorithm.
 
@@ -29,7 +29,6 @@ class Algorithm:
             biconf_cascade (bool): Correct cascading errors during BICONF iterations?
             sub_block_reuse (bool): If False, consider only top-level blocks for cascading errors.
             If True, consider blocks of all sizes for cascading errors.
-            block_parity_inference (bool): TODO
         """
         self.name = name
         self.cascade_iterations = cascade_iterations
@@ -39,7 +38,6 @@ class Algorithm:
         self.biconf_correct_complement = biconf_correct_complement
         self.biconf_cascade = biconf_cascade
         self.sub_block_reuse = sub_block_reuse
-        self.block_parity_inference = block_parity_inference
         ALGORITHMS[name] = self
 
 def get_algorithm_by_name(name):
@@ -56,8 +54,7 @@ def get_algorithm_by_name(name):
 
 _MIN_ESTIMATED_BIT_ERROR_RATE = 0.00001
 
-# Name in Demystifying paper: Cascade orig.
-# Name in Andre Reis Thesis : original
+# Name : original
 
 def _original_block_size_function(estimated_bit_error_rate, key_size, iteration):
     if estimated_bit_error_rate < _MIN_ESTIMATED_BIT_ERROR_RATE:
@@ -73,11 +70,9 @@ _ORIGINAL_ALGORITHM = Algorithm(name="original",
                                 biconf_error_free_streak=False,
                                 biconf_correct_complement=False,
                                 biconf_cascade=False,
-                                sub_block_reuse=False,
-                                block_parity_inference=False)
+                                sub_block_reuse=False)
 
-# Name in Demystifying paper: Cascade mod. (1)
-# Name in Andre Reis Thesis : biconf
+# Name : biconf
 
 def _biconf_block_size_function(estimated_bit_error_rate, key_size, iteration):
     if estimated_bit_error_rate < _MIN_ESTIMATED_BIT_ERROR_RATE:
@@ -93,11 +88,9 @@ _BICONF_ALGORITHM = Algorithm(name="biconf",
                               biconf_error_free_streak=True,
                               biconf_correct_complement=False,
                               biconf_cascade=False,
-                              sub_block_reuse=False,
-                              block_parity_inference=False)
+                              sub_block_reuse=False)
 
-# Name in Demystifying paper: Cascade opt. (2)
-# Name in Andre Reis Thesis : yanetal (Yan et al.)
+# Name : yanetal
 
 def _yanetal_block_size_function(estimated_bit_error_rate, key_size, iteration):
     if estimated_bit_error_rate < _MIN_ESTIMATED_BIT_ERROR_RATE:
@@ -115,11 +108,9 @@ _YANETAL_ALGORITHM = Algorithm(name="yanetal",
                                biconf_error_free_streak=False,
                                biconf_correct_complement=False,
                                biconf_cascade=False,
-                               sub_block_reuse=False,
-                               block_parity_inference=False)
+                               sub_block_reuse=False)
 
-# Name in Demystifying paper: Cascade opt. (3)
-# Name in Andre Reis Thesis : -
+# Name : option3
 
 def _option3456_block_size_function(estimated_bit_error_rate, key_size, iteration):
     if estimated_bit_error_rate < _MIN_ESTIMATED_BIT_ERROR_RATE:
@@ -138,11 +129,9 @@ _OPTION3_ALGORITHM = Algorithm(name="option3",
                                biconf_error_free_streak=False,
                                biconf_correct_complement=False,
                                biconf_cascade=False,
-                               sub_block_reuse=False,
-                               block_parity_inference=False)
+                               sub_block_reuse=False)
 
-# Name in Demystifying paper: Cascade opt. (4)
-# Name in Andre Reis Thesis : -
+# Name : option4
 
 _OPTION4_ALGORITHM = Algorithm(name="option4",
                                cascade_iterations=16,
@@ -151,12 +140,10 @@ _OPTION4_ALGORITHM = Algorithm(name="option4",
                                biconf_error_free_streak=False,
                                biconf_correct_complement=False,
                                biconf_cascade=False,
-                               sub_block_reuse=True,
-                               block_parity_inference=False)
+                               sub_block_reuse=True)
 
 
-# Name in Demystifying paper: Cascade opt. (7)
-# Name in Andre Reis Thesis : option-7
+# Name : option7
 
 def _option7_block_size_function(estimated_bit_error_rate, key_size, iteration):
     if estimated_bit_error_rate < _MIN_ESTIMATED_BIT_ERROR_RATE:
@@ -174,11 +161,9 @@ _OPTION7_ALGORITHM = Algorithm(name="option7",
                                biconf_error_free_streak=False,
                                biconf_correct_complement=False,
                                biconf_cascade=False,
-                               sub_block_reuse=True,
-                               block_parity_inference=False)
+                               sub_block_reuse=True)
 
-# Name in Demystifying paper: Cascade opt. (8)
-# Name in Andre Reis Thesis : option-8
+# Name : option8
 
 def _option8_block_size_function(estimated_bit_error_rate, key_size, iteration):
     if estimated_bit_error_rate < _MIN_ESTIMATED_BIT_ERROR_RATE:
@@ -199,25 +184,4 @@ _OPTION8_ALGORITHM = Algorithm(name="option8",
                                biconf_error_free_streak=False,
                                biconf_correct_complement=False,
                                biconf_cascade=False,
-                               sub_block_reuse=True,
-                               block_parity_inference=False)
-
-_CUSTOM1_ALGORITHM = Algorithm(name="custom1",
-                               cascade_iterations=2,
-                               block_size_function=_original_block_size_function,
-                               biconf_iterations=0,
-                               biconf_error_free_streak=False,
-                               biconf_correct_complement=False,
-                               biconf_cascade=False,
-                               sub_block_reuse=False,
-                               block_parity_inference=False)
-
-_CUSTOM2_ALGORITHM = Algorithm(name="custom2",
-                               cascade_iterations=0,
-                               block_size_function=_original_block_size_function,
-                               biconf_iterations=10,
-                               biconf_error_free_streak=True,
-                               biconf_correct_complement=False,
-                               biconf_cascade=False,
-                               sub_block_reuse=False,
-                               block_parity_inference=False)
+                               sub_block_reuse=True)

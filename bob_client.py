@@ -1,6 +1,6 @@
 """
 Bob Client - gRPC Client for Cascade Error Correction
-Bob utilise Cascade pour corriger sa clé en demandant des parités à Alice via gRPC.
+Bob uses Cascade to correct his key by requesting parities from Alice via gRPC.
 """
 
 import numpy as np
@@ -23,25 +23,26 @@ def run_bob_client(server_address='localhost:50051',
                    data_file="raw_data/parsed_qkd_data_partial_10000(in).csv",
                    algorithm='yanetal'):
     """
-    Lance le client Bob pour la correction d'erreurs avec gRPC.
+    Run Bob client for error correction with gRPC.
     
     Args:
-        server_address (str): Adresse du serveur Alice
-        data_file (str): Fichier de données QKD
-        algorithm (str): Algorithme Cascade à utiliser
+        server_address (str): Alice server address
+        data_file (str): QKD data file
+        algorithm (str): Cascade algorithm to use
     """
     
     print("="*70)
     print("  BOB CLIENT - QKD CASCADE gRPC")
     print("="*70)
     
-    # 1. Charger les données et faire le sifting
+    # 1. Load data and perform sifting
     print(f"\n[Bob] Loading data from {data_file}")
     df = pd.read_csv(data_file)
     
     alice_bits, bob_bits = sifting(df)
     print(f"[Bob] Sifted {len(bob_bits)} bits")
     
+    np.random.seed(42) 
     # 2. Parameter Estimation
     qber, qber_low, qber_high, alice_key_bits, bob_key_bits = parameter_estimation(
         alice_bits, bob_bits
@@ -53,10 +54,10 @@ def run_bob_client(server_address='localhost:50051',
         print(f"[Bob] ABORT: QBER too high ({qber_high*100:.2f}% > {QBER_THRESHOLD*100}%)")
         return
     
-    # 3. Convertir en objet Key
+    # 3. Convert to Key object
     bob_key = Key(bob_key_bits)
     
-    # 4. Créer le canal gRPC vers Alice
+    # 4. Create gRPC channel to Alice
     print(f"\n[Bob] Connecting to Alice at {server_address}...")
     try:
         channel = gRPCClassicalChannel(server_address)
@@ -65,7 +66,7 @@ def run_bob_client(server_address='localhost:50051',
         print("[Bob] Make sure Alice server is running!")
         return
     
-    # 5. Lancer Cascade avec le canal gRPC
+    # 5. Start Cascade with gRPC channel
     print(f"\n[Bob] Starting Cascade error correction ({algorithm})...")
     print(f"[Bob] Initial errors: {np.sum(alice_key_bits != bob_key_bits)}")
     
@@ -76,10 +77,10 @@ def run_bob_client(server_address='localhost:50051',
         estimated_bit_error_rate=qber
     )
     
-    # Lancer la reconciliation
+    # Start reconciliation
     reconciled_key = reconciliation.reconcile()
     
-    # 6. Résultats
+    # 6. Results
     stats = reconciliation.stats
     leaked_bits = channel.bits_leaked
     corrected_bob = reconciled_key.bits
@@ -117,12 +118,12 @@ def run_bob_client(server_address='localhost:50051',
         channel.close()
         return
     
-    # Bob fait le hashing (Alice doit faire la même chose de son côté)
+    # Bob performs hashing (Alice must do the same on her side)
     bob_secure_key, toeplitz_seed = toeplitz_hash(corrected_bob, final_key_length)
     
     print(f"[Bob] Generated final secure key of {len(bob_secure_key):,} bits")
     
-    # 8. Fermer la connexion
+    # 8. Close connection
     channel.close()
     
     print(f"\n{'='*70}")

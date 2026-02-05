@@ -1,6 +1,6 @@
 """
 gRPC Classical Channel
-Permet à Bob de communiquer avec Alice via le réseau.
+Allows Bob to communicate with Alice over the network.
 """
 
 import grpc
@@ -23,26 +23,26 @@ except ImportError as e:
 
 class gRPCClassicalChannel:
     """
-    Canal de communication classique via gRPC.
-    Bob utilise ce canal pour demander des parités à Alice.
+    Classical communication channel via gRPC.
+    Bob uses this channel to request parities from Alice.
     """
     
     def __init__(self, server_address='localhost:50051'):
         """
         Args:
-            server_address (str): Adresse du serveur Alice (ex: 'localhost:50051')
+            server_address (str): Alice server address (e.g. 'localhost:50051')
         """
         self.server_address = server_address
         self.bits_leaked = 0
         
-        # Créer une connexion au serveur Alice
+        # Create connection to Alice server
         self.channel = grpc.insecure_channel(server_address)
         self.stub = qkd_grpc_cascade_pb2_grpc.CascadeServiceStub(self.channel)
         
         print(f"[Bob] Connected to Alice at {server_address}")
     
     def start_reconciliation(self, algorithm_name):
-        """Signaler à Alice le début de la reconciliation"""
+        """Signal to Alice the start of reconciliation"""
         request = qkd_grpc_cascade_pb2.StartRequest(algorithm_name=algorithm_name)
         try:
             self.stub.StartReconciliation(request)
@@ -53,15 +53,15 @@ class gRPCClassicalChannel:
     
     def ask_parities(self, blocks):
         """
-        Demander les parités de plusieurs blocs à Alice.
+        Request parities of multiple blocks from Alice.
         
         Args:
-            blocks (list): Liste d'objets Block
+            blocks (list): List of Block objects
             
         Returns:
-            list: Liste de parités (0 ou 1)
+            list: List of parities (0 or 1)
         """
-        # Convertir les Block objects en messages protobuf
+        # Convert Block objects to protobuf messages
         block_infos = []
         for block in blocks:
             block_info = qkd_grpc_cascade_pb2.BlockInfo(
@@ -71,10 +71,10 @@ class gRPCClassicalChannel:
             )
             block_infos.append(block_info)
         
-        # Créer la requête
+        # Create the request
         request = qkd_grpc_cascade_pb2.ParityRequest(blocks=block_infos)
         
-        # Envoyer à Alice et recevoir la réponse
+        # Send to Alice and receive response
         try:
             response = self.stub.AskParities(request)
             parities = list(response.parities)
@@ -89,7 +89,7 @@ class gRPCClassicalChannel:
             raise
     
     def end_reconciliation(self, algorithm_name):
-        """Signaler à Alice la fin de la reconciliation"""
+        """Signal to Alice the end of reconciliation"""
         request = qkd_grpc_cascade_pb2.EndRequest(algorithm_name=algorithm_name)
         try:
             self.stub.EndReconciliation(request)
@@ -98,6 +98,6 @@ class gRPCClassicalChannel:
             print(f"[Bob] WARNING: Could not notify Alice of end - {e}")
     
     def close(self):
-        """Fermer la connexion"""
+        """Close the connection"""
         self.channel.close()
         print("[Bob] Closed connection to Alice")

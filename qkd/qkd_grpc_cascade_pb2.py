@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16qkd_grpc_cascade.proto\x12\x03qkd\"/\n\rParityRequest\x12\x1e\n\x06\x62locks\x18\x01 \x03(\x0b\x32\x0e.qkd.BlockInfo\"G\n\tBlockInfo\x12\x12\n\nshuffle_id\x18\x01 \x01(\t\x12\x13\n\x0bstart_index\x18\x02 \x01(\x05\x12\x11\n\tend_index\x18\x03 \x01(\x05\"\"\n\x0eParityResponse\x12\x10\n\x08parities\x18\x01 \x03(\x05\"&\n\x0cStartRequest\x12\x16\n\x0e\x61lgorithm_name\x18\x01 \x01(\t\"$\n\nEndRequest\x12\x16\n\x0e\x61lgorithm_name\x18\x01 \x01(\t\"\x07\n\x05\x45mpty2\xb0\x01\n\x0e\x43\x61scadeService\x12\x36\n\x0b\x41skParities\x12\x12.qkd.ParityRequest\x1a\x13.qkd.ParityResponse\x12\x34\n\x13StartReconciliation\x12\x11.qkd.StartRequest\x1a\n.qkd.Empty\x12\x30\n\x11\x45ndReconciliation\x12\x0f.qkd.EndRequest\x1a\n.qkd.Emptyb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x16qkd_grpc_cascade.proto\x12\x03qkd\"/\n\rParityRequest\x12\x1e\n\x06\x62locks\x18\x01 \x03(\x0b\x32\x0e.qkd.BlockInfo\"G\n\tBlockInfo\x12\x12\n\nshuffle_id\x18\x01 \x01(\t\x12\x13\n\x0bstart_index\x18\x02 \x01(\x05\x12\x11\n\tend_index\x18\x03 \x01(\x05\"\"\n\x0eParityResponse\x12\x10\n\x08parities\x18\x01 \x03(\x05\"&\n\x0cStartRequest\x12\x16\n\x0e\x61lgorithm_name\x18\x01 \x01(\t\"$\n\nEndRequest\x12\x16\n\x0e\x61lgorithm_name\x18\x01 \x01(\t\"!\n\x0ePEIndexRequest\x12\x0f\n\x07indexes\x18\x01 \x03(\x05\"\x07\n\x05\x45mpty2\xf4\x01\n\x0e\x43\x61scadeService\x12\x36\n\x0b\x41skParities\x12\x12.qkd.ParityRequest\x1a\x13.qkd.ParityResponse\x12\x34\n\x13StartReconciliation\x12\x11.qkd.StartRequest\x1a\n.qkd.Empty\x12\x30\n\x11\x45ndReconciliation\x12\x0f.qkd.EndRequest\x1a\n.qkd.Empty\x12\x42\n\x1fShareParameterEstimationIndexes\x12\x13.qkd.PEIndexRequest\x1a\n.qkd.Emptyb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -41,8 +41,10 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_STARTREQUEST']._serialized_end=227
   _globals['_ENDREQUEST']._serialized_start=229
   _globals['_ENDREQUEST']._serialized_end=265
-  _globals['_EMPTY']._serialized_start=267
-  _globals['_EMPTY']._serialized_end=274
-  _globals['_CASCADESERVICE']._serialized_start=277
-  _globals['_CASCADESERVICE']._serialized_end=453
+  _globals['_PEINDEXREQUEST']._serialized_start=267
+  _globals['_PEINDEXREQUEST']._serialized_end=300
+  _globals['_EMPTY']._serialized_start=302
+  _globals['_EMPTY']._serialized_end=309
+  _globals['_CASCADESERVICE']._serialized_start=312
+  _globals['_CASCADESERVICE']._serialized_end=556
 # @@protoc_insertion_point(module_scope)

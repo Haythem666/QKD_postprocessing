@@ -26,8 +26,7 @@ if _version_not_supported:
 
 
 class CascadeServiceStub(object):
-    """Service que Alice offre à Bob
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
         """Constructor.
@@ -50,28 +49,36 @@ class CascadeServiceStub(object):
                 request_serializer=qkd__grpc__cascade__pb2.EndRequest.SerializeToString,
                 response_deserializer=qkd__grpc__cascade__pb2.Empty.FromString,
                 _registered_method=True)
+        self.ShareParameterEstimationIndexes = channel.unary_unary(
+                '/qkd.CascadeService/ShareParameterEstimationIndexes',
+                request_serializer=qkd__grpc__cascade__pb2.PEIndexRequest.SerializeToString,
+                response_deserializer=qkd__grpc__cascade__pb2.Empty.FromString,
+                _registered_method=True)
 
 
 class CascadeServiceServicer(object):
-    """Service que Alice offre à Bob
-    """
+    """Missing associated documentation comment in .proto file."""
 
     def AskParities(self, request, context):
-        """Bob demande les parités de plusieurs blocs
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def StartReconciliation(self, request, context):
-        """Bob signale le début d'une nouvelle session Cascade
-        """
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def EndReconciliation(self, request, context):
-        """Bob signale la fin de la session
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ShareParameterEstimationIndexes(self, request, context):
+        """NOUVEAU: Bob envoie les index à révéler pour PE
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -95,6 +102,11 @@ def add_CascadeServiceServicer_to_server(servicer, server):
                     request_deserializer=qkd__grpc__cascade__pb2.EndRequest.FromString,
                     response_serializer=qkd__grpc__cascade__pb2.Empty.SerializeToString,
             ),
+            'ShareParameterEstimationIndexes': grpc.unary_unary_rpc_method_handler(
+                    servicer.ShareParameterEstimationIndexes,
+                    request_deserializer=qkd__grpc__cascade__pb2.PEIndexRequest.FromString,
+                    response_serializer=qkd__grpc__cascade__pb2.Empty.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
             'qkd.CascadeService', rpc_method_handlers)
@@ -104,8 +116,7 @@ def add_CascadeServiceServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class CascadeService(object):
-    """Service que Alice offre à Bob
-    """
+    """Missing associated documentation comment in .proto file."""
 
     @staticmethod
     def AskParities(request,
@@ -177,6 +188,33 @@ class CascadeService(object):
             target,
             '/qkd.CascadeService/EndReconciliation',
             qkd__grpc__cascade__pb2.EndRequest.SerializeToString,
+            qkd__grpc__cascade__pb2.Empty.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ShareParameterEstimationIndexes(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/qkd.CascadeService/ShareParameterEstimationIndexes',
+            qkd__grpc__cascade__pb2.PEIndexRequest.SerializeToString,
             qkd__grpc__cascade__pb2.Empty.FromString,
             options,
             channel_credentials,

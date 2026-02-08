@@ -11,8 +11,7 @@ from qkd.privacy_amplification import toeplitz_hash, binary_entropy
 
 # Configuration
 QBER_THRESHOLD = 0.11
-#MAX_ROWS = 100_000  # Limit to first 100K rows with good QBER (<5%)
-CHUNK_SIZE = 100_000  # Process in single chunk
+CHUNK_SIZE = 500_000  # Process in single chunk
 CASCADE_ALGORITHM = 'yanetal'  # Options: 'original', 'yanetal', 'option7', 'option8'
 BATCH_SIZE_THRESHOLD = 50_000  # Process when buffer reaches 50K bits
 
@@ -24,7 +23,6 @@ def process_large_file(filepath):
     
     Args:
         filepath: Path to the CSV file 
-        output_file: File where results are saved
     
     Strategy:
         1. Read the file in chunks
@@ -38,7 +36,6 @@ def process_large_file(filepath):
     print("  QKD POST-PROCESSING - LARGE FILE (STREAMING)")
     print("="*70)
     print(f"File: {filepath}")
-    #print(f"Max rows: {MAX_ROWS:,} (good QBER region)")
     print(f"Chunk size: {CHUNK_SIZE:,} rows")
     print(f"Algorithm: {CASCADE_ALGORITHM}")
     print("="*70)
@@ -64,11 +61,7 @@ def process_large_file(filepath):
 
         print(f"\nChunk {chunk_num}: {chunk_size:,} rows (total: {total_raw_bits:,})")
         
-        # Stop if we've reached the max rows limit
-        #if total_raw_bits >= MAX_ROWS:
-        #    print(f"\nReached MAX_ROWS limit ({MAX_ROWS:,}). Stopping chunk reading.")
-
-        chunk.sort_values("qubit_id", inplace=True)
+        
         raw_buffer = pd.concat([raw_buffer, chunk])
 
         # If the buffer is too large, process it
@@ -90,10 +83,10 @@ def process_large_file(filepath):
 
             print(f"QBER: {qber*100:.3f}% (CI: [{qber_low*100:.3f}%, {qber_high*100:.3f}%])")
             
-            if qber_high > QBER_THRESHOLD:
-                print(" ABORT batch: QBER too high")
-                raw_buffer = pd.DataFrame()
-                continue
+            #if qber_high > QBER_THRESHOLD:
+            #    print(" ABORT batch: QBER too high")
+            #    raw_buffer = pd.DataFrame()
+            #    continue
 
             # Cascade Error Correction
             print(f"\nCascade ({CASCADE_ALGORITHM})...")

@@ -184,7 +184,7 @@ if __name__ == "__main__":
     parser.add_argument('--server', type=str, default='localhost:50051',
                        help='Alice server address')
     parser.add_argument('--data', type=str,
-                       default="raw_data/parsed_qkd_data_partial_10000(in).csv",
+                       default="raw_data/parsed_qkd_data.csv",
                        help='QKD data file')
     parser.add_argument('--algorithm', type=str, default='yanetal',
                        choices=['original', 'yanetal', 'option7', 'option8'],

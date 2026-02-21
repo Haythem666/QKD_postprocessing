@@ -170,7 +170,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Alice gRPC Server for QKD (Chunked)")
     parser.add_argument('--port', type=int, default=50051, help='Port to listen on')
     parser.add_argument('--data', type=str, 
-                       default="raw_data/parsed_qkd_data_partial_10000(in).csv",
+                       default="raw_data/parsed_qkd_data.csv",
                        help='QKD data file')
     parser.add_argument('--chunk-size', type=int, default=1_000_000,
                        help='CSV chunk size')

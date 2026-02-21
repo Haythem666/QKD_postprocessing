@@ -72,7 +72,7 @@ class SimpleClassicalChannel:
         pass
 
 
-def cascade_opensource(alice_bits, bob_bits, qber, algorithm, verbose=True):
+def cascade_opensource(alice_bits, bob_bits, qber, algorithm, verbose=False):
     """
     Use open-source Cascade to correct errors.
     

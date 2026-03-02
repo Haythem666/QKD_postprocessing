@@ -36,7 +36,13 @@ class gRPCClassicalChannel:
         self.bits_leaked = 0
         
         # Create connection to Alice server
-        self.channel = grpc.insecure_channel(server_address)
+
+        # Create connection with increased message limits
+        options = [
+            ('grpc.max_send_message_length', 100 * 1024 * 1024),      # 100 MB
+            ('grpc.max_receive_message_length', 100 * 1024 * 1024),   # 100 MB
+        ]
+        self.channel = grpc.insecure_channel(server_address, options=options)
         self.stub = qkd_grpc_cascade_pb2_grpc.CascadeServiceStub(self.channel)
         
         print(f"[Bob] Connected to Alice at {server_address}")

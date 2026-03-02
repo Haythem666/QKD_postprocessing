@@ -11,9 +11,8 @@ from qkd.privacy_amplification import toeplitz_hash, binary_entropy
 
 # Configuration
 QBER_THRESHOLD = 0.11
-CHUNK_SIZE = 500_000  # Process in single chunk
-CASCADE_ALGORITHM = 'yanetal'  # Options: 'original', 'yanetal', 'option7', 'option8'
-BATCH_SIZE_THRESHOLD = 50_000  # Process when buffer reaches 50K bits
+CHUNK_SIZE = 100000  # Modified by GUI
+CASCADE_ALGORITHM = 'yanetal'  # Modified by GUI
 
 
 def process_large_file(filepath):
@@ -64,64 +63,62 @@ def process_large_file(filepath):
         
         raw_buffer = pd.concat([raw_buffer, chunk])
 
-        # If the buffer is too large, process it
-        if len(raw_buffer) >= BATCH_SIZE_THRESHOLD:
-            batch_number += 1
-            print(f"\n--- Processing batch {batch_number} ---")
+        batch_number += 1
+        print(f"\n--- Processing batch {batch_number} ---")
 
-            # Sifting
-            alice_bits, bob_bits = sifting(raw_buffer)
+        # Sifting
+        alice_bits, bob_bits = sifting(raw_buffer)
 
-            total_sifted_bits += len(alice_bits)
+        total_sifted_bits += len(alice_bits)
             
-            print(f" Sifted: {len(alice_bits):,} bits (buffer: {len(raw_buffer):,})")
+        print(f" Sifted: {len(alice_bits):,} bits (buffer: {len(raw_buffer):,})")
 
-            # Parameter Estimation
-            qber, qber_low, qber_high, alice_key, bob_key = parameter_estimation(
+        # Parameter Estimation
+        qber, qber_low, qber_high, alice_key, bob_key = parameter_estimation(
                 alice_bits, bob_bits
-            )
+        )
 
-            print(f"QBER: {qber*100:.3f}% (CI: [{qber_low*100:.3f}%, {qber_high*100:.3f}%])")
+        print(f"QBER: {qber*100:.3f}% (CI: [{qber_low*100:.3f}%, {qber_high*100:.3f}%])")
             
-            #if qber_high > QBER_THRESHOLD:
-            #    print(" ABORT batch: QBER too high")
-            #    raw_buffer = pd.DataFrame()
-            #    continue
-
-            # Cascade Error Correction
-            print(f"\nCascade ({CASCADE_ALGORITHM})...")
-            corrected_bob_key, leaked_bits, final_errors, stats = cascade_opensource(
-                alice_key, bob_key, qber, algorithm=CASCADE_ALGORITHM
-            )
-
-            print(f"  Errors: {final_errors}")
-            print(f"  Leaked: {leaked_bits}")
-            print(f"  Efficiency: {stats.realistic_efficiency:.3f}")
-
-            if final_errors > 0:
-                print(" WARNING: Errors remain after Cascade!")
-            
-            # Privacy Amplification
-            h_qber = binary_entropy(qber_high)
-            n = len(alice_key)
-            safety_margin = 50
-
-            final_len = int(n - leaked_bits - n * h_qber - safety_margin)
-            final_len = max(0, final_len)
-
-            if final_len > 0 and final_errors == 0:
-                alice_sec, seed = toeplitz_hash(alice_key, final_len)
-                bob_sec, _ = toeplitz_hash(corrected_bob_key, final_len, seed=seed)
-
-                if np.array_equal(alice_sec, bob_sec):
-                    total_final_keys += final_len
-                    print(f" Final key: {final_len:,} bits")
-                else:
-                    print(" PA failed: keys differ")
-
-            
-            # Clear buffer for next batch
+        if qber_high > QBER_THRESHOLD:
+            print(" ABORT batch: QBER too high")
             raw_buffer = pd.DataFrame()
+            continue
+
+        # Cascade Error Correction
+        print(f"\nCascade ({CASCADE_ALGORITHM})...")
+        corrected_bob_key, leaked_bits, final_errors, stats = cascade_opensource(
+            alice_key, bob_key, qber, algorithm=CASCADE_ALGORITHM
+        )
+
+        print(f"  Errors: {final_errors}")
+        print(f"  Leaked: {leaked_bits}")
+        print(f"  Efficiency: {stats.realistic_efficiency:.3f}")
+
+        if final_errors > 0:
+            print(" WARNING: Errors remain after Cascade!")
+            
+        # Privacy Amplification
+        h_qber = binary_entropy(qber_high)
+        n = len(alice_key)
+        safety_margin = 50
+
+        final_len = int(n - leaked_bits - n * h_qber - safety_margin)
+        final_len = max(0, final_len)
+
+        if final_len > 0 and final_errors == 0:
+            alice_sec, seed = toeplitz_hash(alice_key, final_len)
+            bob_sec, _ = toeplitz_hash(corrected_bob_key, final_len, seed=seed)
+
+            if np.array_equal(alice_sec, bob_sec):
+                total_final_keys += final_len
+                print(f" Final key: {final_len:,} bits")
+            else:
+                print(" PA failed: keys differ")
+
+            
+        # Clear buffer for next batch
+        raw_buffer = pd.DataFrame()
 
     elapsed_time = time.time() - start_time
 
@@ -139,7 +136,7 @@ def process_large_file(filepath):
     
 
 if __name__ == "__main__":
-    LARGE_FILE = "raw_data/parsed_qkd_data.csv" 
+    LARGE_FILE = "raw_data/parsed_qkd_data_partial_1M.csv"  # Modified by GUI
     
     print("Starting large file processing...")
     print()

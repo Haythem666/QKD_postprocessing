@@ -61,7 +61,7 @@ def sifting_chunked(csv_file, chunk_size=1_000_000):
     alice_bits = np.concatenate(alice_list)
     bob_bits = np.concatenate(bob_list)
     
-    print(f"[Alice] Total: {total_rows:,} rows → {len(alice_bits):,} sifted bits")
+    print(f"[Alice] Total: {total_rows:,} rows -> {len(alice_bits):,} sifted bits")
     
     return alice_bits, bob_bits
 
@@ -105,7 +105,7 @@ class AliceCascadeService(qkd_grpc_cascade_pb2_grpc.CascadeServiceServicer):
         return qkd_grpc_cascade_pb2.Empty()
 
 
-def run_alice_server(port=50051, data_file="raw_data/parsed_qkd_data.csv", 
+def run_alice_server(port=50051, data_file="raw_data/parsed_qkd_data_partial_10M.csv", 
                      chunk_size=1_000_000):
     """
     Start Alice server with chunked processing.
@@ -139,7 +139,12 @@ def run_alice_server(port=50051, data_file="raw_data/parsed_qkd_data.csv",
     alice_key = Key(alice_key_bits)
     
     # 4. Create gRPC server
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    options = [
+        ('grpc.max_send_message_length', 100 * 1024 * 1024),      # 100 MB
+        ('grpc.max_receive_message_length', 100 * 1024 * 1024),   # 100 MB
+    ]
+    
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10), options=options)
     
     qkd_grpc_cascade_pb2_grpc.add_CascadeServiceServicer_to_server(
         AliceCascadeService(alice_key), 
@@ -170,7 +175,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Alice gRPC Server for QKD (Chunked)")
     parser.add_argument('--port', type=int, default=50051, help='Port to listen on')
     parser.add_argument('--data', type=str, 
-                       default="raw_data/parsed_qkd_data.csv",
+                       default="raw_data/parsed_qkd_data_partial_10M.csv",
                        help='QKD data file')
     parser.add_argument('--chunk-size', type=int, default=1_000_000,
                        help='CSV chunk size')

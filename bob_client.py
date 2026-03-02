@@ -54,13 +54,13 @@ def sifting_chunked(csv_file, chunk_size=1_000_000):
     alice_bits = np.concatenate(alice_list)
     bob_bits = np.concatenate(bob_list)
     
-    print(f"[Bob] Total: {total_rows:,} rows → {len(alice_bits):,} sifted bits")
+    print(f"[Bob] Total: {total_rows:,} rows -> {len(alice_bits):,} sifted bits")
     
     return alice_bits, bob_bits
 
 
 def run_bob_client(server_address='localhost:50051', 
-                   data_file="raw_data/parsed_qkd_data.csv",
+                   data_file="raw_data/parsed_qkd_data_partial_10M.csv",
                    algorithm='yanetal',
                    chunk_size=1_000_000):
     """
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     parser.add_argument('--server', type=str, default='localhost:50051',
                        help='Alice server address')
     parser.add_argument('--data', type=str,
-                       default="raw_data/parsed_qkd_data.csv",
+                       default="raw_data/parsed_qkd_data_partial_10M.csv",
                        help='QKD data file')
     parser.add_argument('--algorithm', type=str, default='yanetal',
                        choices=['original', 'yanetal', 'option7', 'option8'],

@@ -1,3 +1,4 @@
+import argparse
 import pandas as pd
 import numpy as np
 import time
@@ -15,7 +16,7 @@ CHUNK_SIZE = 100000  # Modified by GUI
 CASCADE_ALGORITHM = 'yanetal'  # Modified by GUI
 
 
-def process_large_file(filepath):
+def process_large_file(filepath, chunk_size=CHUNK_SIZE, algorithm=CASCADE_ALGORITHM):
 
     """
     Process a large QKD file in chunks (streaming).
@@ -35,8 +36,8 @@ def process_large_file(filepath):
     print("  QKD POST-PROCESSING - LARGE FILE (STREAMING)")
     print("="*70)
     print(f"File: {filepath}")
-    print(f"Chunk size: {CHUNK_SIZE:,} rows")
-    print(f"Algorithm: {CASCADE_ALGORITHM}")
+    print(f"Chunk size: {chunk_size:,} rows")
+    print(f"Algorithm: {algorithm}")
     print("="*70)
 
     raw_buffer = pd.DataFrame()
@@ -53,7 +54,7 @@ def process_large_file(filepath):
     # Read the file in chunks
     print("\nProcessing chunks...")
 
-    for chunk_num, chunk in enumerate(pd.read_csv(filepath, chunksize=CHUNK_SIZE), start=1):
+    for chunk_num, chunk in enumerate(pd.read_csv(filepath, chunksize=chunk_size), start=1):
         
         chunk_size = len(chunk)
         total_raw_bits += chunk_size
@@ -86,9 +87,9 @@ def process_large_file(filepath):
             continue
 
         # Cascade Error Correction
-        print(f"\nCascade ({CASCADE_ALGORITHM})...")
+        print(f"\nCascade ({algorithm})...")
         corrected_bob_key, leaked_bits, final_errors, stats = cascade_opensource(
-            alice_key, bob_key, qber, algorithm=CASCADE_ALGORITHM
+            alice_key, bob_key, qber, algorithm=algorithm
         )
 
         print(f"  Errors: {final_errors}")
@@ -136,9 +137,35 @@ def process_large_file(filepath):
     
 
 if __name__ == "__main__":
-    LARGE_FILE = "raw_data/parsed_qkd_data_partial_1M.csv"  # Modified by GUI
+    LARGE_FILE = "raw_data/parsed_qkd_data_partial_100k.csv"  # Modified by GUI
+
+    parser = argparse.ArgumentParser(description="QKD post-processing for large CSV files")
+    parser.add_argument(
+        "--data",
+        default=LARGE_FILE,
+        help="Path to input CSV dataset"
+    )
+    parser.add_argument(
+        "--algo",
+        default=CASCADE_ALGORITHM,
+        help="Cascade algorithm (e.g. original, yanetal, option7, option8)"
+    )
+    parser.add_argument(
+        "--chunk",
+        type=int,
+        default=CHUNK_SIZE,
+        help="Chunk size in number of rows"
+    )
+
+    args = parser.parse_args()
+
+    if args.chunk <= 0:
+        parser.error("--chunk must be a positive integer")
     
     print("Starting large file processing...")
+    print(f"Selected data: {args.data}")
+    print(f"Selected algorithm: {args.algo}")
+    print(f"Selected chunk size: {args.chunk:,}")
     print()
     
-    process_large_file(LARGE_FILE)
+    process_large_file(args.data, chunk_size=args.chunk, algorithm=args.algo)

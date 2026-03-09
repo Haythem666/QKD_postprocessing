@@ -113,14 +113,14 @@ class QKDConfigGUI:
         # ═══════════════════════════════════════════════════════
         # CASCADE ALGORITHM
         # ═══════════════════════════════════════════════════════
-        algo_frame = ttk.LabelFrame(main_frame, text="⚙️ Algorithm", padding="12")
+        algo_frame = ttk.LabelFrame(main_frame, text="Algorithm", padding="12")
         algo_frame.pack(fill=tk.X, pady=(0, 10))
         
         algo_options = [
             ("original", "Original (4 passes)"),
             ("yanetal", "Yanetal (10 passes) "),
             ("option7", "Option7 (14 passes)"),
-            ("option8", "Option8 ()")
+            ("option8", "Option8 (best efficiency)")
         ]
         
         for value, text in algo_options:
@@ -153,7 +153,7 @@ class QKDConfigGUI:
         # Info label
         info_label = tk.Label(
             main_frame,
-            text="Processing uses the current Python environment",
+            text="💡 The processing will run in a separate terminal window",
             font=("Arial", 8),
             fg="gray"
         )
@@ -174,7 +174,7 @@ class QKDConfigGUI:
 📦 Chunk: {self.chunk_size.get():,} rows
 ⚙️ Algorithm: {self.algorithm.get()}
 
-Processing starts with the current Python interpreter.
+Processing will start in a new terminal.
 This window will close.
 
 Continue?"""
@@ -219,7 +219,7 @@ Continue?"""
             with open("process_large_file.py", "w", encoding="utf-8") as f:
                 f.write('\n'.join(new_lines))
             
-            print(f"✅ Configuration updated:")
+            print(f"   Configuration updated:")
             print(f"   Dataset: {self.file_path.get()}")
             print(f"   Chunk: {self.chunk_size.get():,}")
             print(f"   Algorithm: {self.algorithm.get()}")
@@ -229,19 +229,33 @@ Continue?"""
             raise
     
     def launch_processing(self):
-        """Launch process_large_file.py with the current Python interpreter"""
+        """Launch process_large_file.py in a new terminal window"""
         
         try:
             if sys.platform == "win32":
-                venv_python = os.path.join(os.getcwd(), ".venv", "Scripts", "python.exe")
+                # Windows: Open new cmd window
+                subprocess.Popen(
+                    ['cmd', '/c', 'start', 'cmd', '/k', 'python', 'process_large_file.py'],
+                    shell=True
+                )
+            elif sys.platform == "darwin":
+                # macOS: Open new Terminal window
+                subprocess.Popen([
+                    'osascript', '-e',
+                    f'tell app "Terminal" to do script "cd {os.getcwd()} && python process_large_file.py"'
+                ])
             else:
-                venv_python = os.path.join(os.getcwd(), ".venv", "bin", "python")
-
-            python_executable = venv_python if os.path.exists(venv_python) else (sys.executable or "python")
-            subprocess.Popen(
-                [python_executable, "process_large_file.py"],
-                cwd=os.getcwd()
-            )
+                # Linux: Try gnome-terminal, then xterm
+                try:
+                    subprocess.Popen([
+                        'gnome-terminal', '--', 'bash', '-c',
+                        f'cd {os.getcwd()} && python process_large_file.py; read -p "Press Enter to close..."'
+                    ])
+                except FileNotFoundError:
+                    subprocess.Popen([
+                        'xterm', '-e',
+                        f'cd {os.getcwd()} && python process_large_file.py; read -p "Press Enter to close..."'
+                    ])
         except Exception as e:
             messagebox.showerror("Error", f"Could not launch processing:\n{e}")
 

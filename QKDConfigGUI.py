@@ -229,35 +229,22 @@ Continue?"""
             raise
     
     def launch_processing(self):
-        """Launch process_large_file.py in a new terminal window"""
+        """Launch process_large_file.py with the current Python interpreter"""
         
         try:
             if sys.platform == "win32":
-                # Windows: Open new cmd window
-                subprocess.Popen(
-                    ['cmd', '/c', 'start', 'cmd', '/k', 'python', 'process_large_file.py'],
-                    shell=True
-                )
-            elif sys.platform == "darwin":
-                # macOS: Open new Terminal window
-                subprocess.Popen([
-                    'osascript', '-e',
-                    f'tell app "Terminal" to do script "cd {os.getcwd()} && python process_large_file.py"'
-                ])
+                venv_python = os.path.join(os.getcwd(), ".venv", "Scripts", "python.exe")
             else:
-                # Linux: Try gnome-terminal, then xterm
-                try:
-                    subprocess.Popen([
-                        'gnome-terminal', '--', 'bash', '-c',
-                        f'cd {os.getcwd()} && python process_large_file.py; read -p "Press Enter to close..."'
-                    ])
-                except FileNotFoundError:
-                    subprocess.Popen([
-                        'xterm', '-e',
-                        f'cd {os.getcwd()} && python process_large_file.py; read -p "Press Enter to close..."'
-                    ])
+                venv_python = os.path.join(os.getcwd(), ".venv", "bin", "python")
+
+            python_executable = venv_python if os.path.exists(venv_python) else (sys.executable or "python")
+            subprocess.Popen(
+                [python_executable, "process_large_file.py"],
+                cwd=os.getcwd()
+            )
         except Exception as e:
             messagebox.showerror("Error", f"Could not launch processing:\n{e}")
+
 
 
 if __name__ == "__main__":

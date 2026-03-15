@@ -8,11 +8,12 @@ from datetime import datetime
 from qkd.sifting import sifting
 from qkd.parameter_estimation import parameter_estimation
 from qkd.cascade_wrapper import cascade_opensource
-from qkd.privacy_amplification import toeplitz_hash, binary_entropy
+from qkd.privacy_amplification import binary_entropy
+from qkd.privacy_amplification_open_source import HashingAlgorithm
 
 # Configuration
 QBER_THRESHOLD = 0.11
-CHUNK_SIZE = 100000  # Modified by GUI
+CHUNK_SIZE = 2_000_000  # Modified by GUI
 CASCADE_ALGORITHM = 'yanetal'  # Modified by GUI
 
 
@@ -108,8 +109,15 @@ def process_large_file(filepath, chunk_size=CHUNK_SIZE, algorithm=CASCADE_ALGORI
         final_len = max(0, final_len)
 
         if final_len > 0 and final_errors == 0:
-            alice_sec, seed = toeplitz_hash(alice_key, final_len)
-            bob_sec, _ = toeplitz_hash(corrected_bob_key, final_len, seed=seed)
+            output_bytes = max(1, (final_len + 7) // 8)
+
+            alice_hash = HashingAlgorithm(''.join(str(int(bit)) for bit in alice_key))
+            alice_bits = alice_hash.shake_256(output_bytes)[:final_len]
+            alice_sec = np.fromiter((int(bit) for bit in alice_bits), dtype=np.uint8, count=final_len)
+
+            bob_hash = HashingAlgorithm(''.join(str(int(bit)) for bit in corrected_bob_key))
+            bob_bits = bob_hash.shake_256(output_bytes)[:final_len]
+            bob_sec = np.fromiter((int(bit) for bit in bob_bits), dtype=np.uint8, count=final_len)
 
             if np.array_equal(alice_sec, bob_sec):
                 total_final_keys += final_len
@@ -137,7 +145,7 @@ def process_large_file(filepath, chunk_size=CHUNK_SIZE, algorithm=CASCADE_ALGORI
     
 
 if __name__ == "__main__":
-    LARGE_FILE = "raw_data/parsed_qkd_data_partial_100k.csv"  # Modified by GUI
+    LARGE_FILE = "raw_data/parsed_qkd_data_partial_10M.csv"  # Modified by GUI
 
     parser = argparse.ArgumentParser(description="QKD post-processing for large CSV files")
     parser.add_argument(

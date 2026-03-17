@@ -139,6 +139,7 @@ def process_large_file(filepath, chunk_size=CHUNK_SIZE, algorithm=CASCADE_ALGORI
     print(f"Total sifted bits:   {total_sifted_bits:,}")
     print(f"Total final keys:    {total_final_keys:,} bits")
     print(f"Batches processed:   {batch_number}")
+    print(f"Elapsed time:        {elapsed_time:.2f} seconds")
     print(f"Overall efficiency:  {total_final_keys/total_raw_bits*100:.2f}%")
     print(f"{'='*70}")
 

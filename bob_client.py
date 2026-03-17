@@ -10,7 +10,8 @@ import argparse
 
 from qkd.parameter_estimation import parameter_estimation
 from qkd.sifting import sifting
-from qkd.privacy_amplification import toeplitz_hash, binary_entropy
+from qkd.privacy_amplification import binary_entropy
+from qkd.privacy_amplification_open_source import HashingAlgorithm
 from qkd.cascade_wrapper import Key
 from qkd.cascade_open_source import Reconciliation
 from qkd.grpc_classical_channel import gRPCClassicalChannel
@@ -161,8 +162,11 @@ def run_bob_client(server_address='localhost:50051',
         channel.close()
         return
     
-    # Bob performs hashing
-    bob_secure_key, toeplitz_seed = toeplitz_hash(corrected_bob, final_key_length)
+    # Bob performs hashing (open-source PA)
+    output_bytes = max(1, (final_key_length + 7) // 8)
+    bob_hash = HashingAlgorithm(''.join(str(int(bit)) for bit in corrected_bob))
+    bob_bits = bob_hash.shake_256(output_bytes)[:final_key_length]
+    bob_secure_key = np.fromiter((int(bit) for bit in bob_bits), dtype=np.uint8, count=final_key_length)
     
     print(f"[Bob] Generated final secure key of {len(bob_secure_key):,} bits")
     

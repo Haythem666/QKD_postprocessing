@@ -17,8 +17,8 @@ def profile_qkd_processing():
     from process_large_file import process_large_file
     
     # File to profile
-    data_file = "raw_data/parsed_qkd_data_partial_1M.csv"  # Start with 1M for speed
-    chunk_size = 1_000_000
+    data_file = "raw_data/parsed_qkd_data.csv"
+    chunk_size = 2_000_000
     algorithm = "yanetal"
     
     print("="*70)

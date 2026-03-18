@@ -9,6 +9,7 @@ import subprocess
 import os
 import sys
 import re
+import csv
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -134,6 +135,13 @@ class QKDPlotterGUI:
                              font=("Arial", 10),
                              cursor="hand2", padx=15, pady=8)
         clear_btn.pack(fill=tk.X)
+
+        export_btn = tk.Button(button_frame, text="Export (PNG/CSV)",
+                      command=self.export_results,
+                      bg="#2980b9", fg="white",
+                      font=("Arial", 10),
+                      cursor="hand2", padx=15, pady=8)
+        export_btn.pack(fill=tk.X, pady=(10, 0))
         
         # Status Label
         self.status_label = tk.Label(left_panel, text="Ready", 
@@ -389,6 +397,67 @@ Continue?"""
             self.color_index = 0
             self.update_plot()
             self.status_label.config(text="Plot cleared", fg="gray")
+
+    def export_results(self):
+        """Export current plot as PNG or plotted data as CSV."""
+        if not self.results:
+            messagebox.showwarning("No Data", "Run at least one experiment before exporting.")
+            return
+
+        save_path = filedialog.asksaveasfilename(
+            title="Export Plot/Data",
+            initialfile="qkd_results",
+            defaultextension=".png",
+            filetypes=[
+                ("PNG image", "*.png"),
+                ("CSV data", "*.csv")
+            ]
+        )
+
+        if not save_path:
+            return
+
+        file_ext = os.path.splitext(save_path)[1].lower()
+
+        try:
+            if file_ext == ".csv":
+                with open(save_path, "w", newline="", encoding="utf-8") as csv_file:
+                    writer = csv.DictWriter(
+                        csv_file,
+                        fieldnames=[
+                            "dataset",
+                            "dataset_path",
+                            "chunk",
+                            "algorithm",
+                            "efficiency",
+                            "final_keys",
+                            "time"
+                        ]
+                    )
+                    writer.writeheader()
+                    for result in self.results:
+                        writer.writerow({
+                            "dataset": result["dataset"],
+                            "dataset_path": result["dataset_path"],
+                            "chunk": result["chunk"],
+                            "algorithm": result["algorithm"],
+                            "efficiency": result["efficiency"],
+                            "final_keys": result["final_keys"],
+                            "time": result["time"]
+                        })
+
+                self.status_label.config(text=f"CSV exported: {os.path.basename(save_path)}", fg="green")
+                messagebox.showinfo("Export Complete", f"Data exported successfully:\n{save_path}")
+            else:
+                if file_ext != ".png":
+                    save_path = f"{save_path}.png"
+
+                self.fig.savefig(save_path, dpi=300, bbox_inches="tight")
+                self.status_label.config(text=f"PNG exported: {os.path.basename(save_path)}", fg="green")
+                messagebox.showinfo("Export Complete", f"Plot exported successfully:\n{save_path}")
+        except Exception as exc:
+            messagebox.showerror("Export Error", f"Failed to export file:\n{exc}")
+            self.status_label.config(text="Export failed", fg="red")
 
 
 if __name__ == "__main__":

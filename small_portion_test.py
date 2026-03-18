@@ -4,7 +4,8 @@ import numpy as np
 
 from qkd.sifting import sifting
 from qkd.parameter_estimation import parameter_estimation
-from qkd.privacy_amplification import toeplitz_hash, binary_entropy
+from qkd.privacy_amplification import toeplitz_hash
+from qkd.privacy_amplification_open_source import binary_entropy
 from qkd.cascade_wrapper import cascade_opensource
 
 

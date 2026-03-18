@@ -8,8 +8,7 @@ from datetime import datetime
 from qkd.sifting import sifting
 from qkd.parameter_estimation import parameter_estimation
 from qkd.cascade_wrapper import cascade_opensource
-from qkd.privacy_amplification import binary_entropy
-from qkd.privacy_amplification_open_source import HashingAlgorithm
+from qkd.privacy_amplification_open_source import HashingAlgorithm, binary_entropy
 
 # Configuration
 QBER_THRESHOLD = 0.11

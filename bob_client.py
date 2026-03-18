@@ -10,8 +10,7 @@ import argparse
 
 from qkd.parameter_estimation import parameter_estimation
 from qkd.sifting import sifting
-from qkd.privacy_amplification import binary_entropy
-from qkd.privacy_amplification_open_source import HashingAlgorithm
+from qkd.privacy_amplification_open_source import HashingAlgorithm, binary_entropy
 from qkd.cascade_wrapper import Key
 from qkd.cascade_open_source import Reconciliation
 from qkd.grpc_classical_channel import gRPCClassicalChannel
@@ -93,9 +92,9 @@ def run_bob_client(server_address='localhost:50051',
     print(f"[Bob] QBER: {qber*100:.2f}% (CI: [{qber_low*100:.2f}%, {qber_high*100:.2f}%])")
     print(f"[Bob] Key after PE: {len(bob_key_bits):,} bits")
     
-    #if qber_high > QBER_THRESHOLD:
-    #    print(f"[Bob] ABORT: QBER too high ({qber_high*100:.2f}% > {QBER_THRESHOLD*100}%)")
-    #    return
+    if qber_high > QBER_THRESHOLD:
+        print(f"[Bob] ABORT: QBER too high ({qber_high*100:.2f}% > {QBER_THRESHOLD*100}%)")
+        return
     
     # 3. Convert to Key object
     bob_key = Key(bob_key_bits)

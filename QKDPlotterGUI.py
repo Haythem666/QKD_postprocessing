@@ -108,7 +108,7 @@ class QKDPlotterGUI:
         
         algo_options = [
             ("original", "Original (○)"),
-            ("yanetal", "Yanetal (□) - Recommended"),
+            ("yanetal", "Yanetal (□)"),
             ("option7", "Option7 (△)"),
             ("option8", "Option8 (◇)")
         ]
@@ -227,7 +227,7 @@ Continue?"""
                 
                 # Update status
                 self.status_label.config(
-                    text=f"✅ Success! Efficiency: {result['efficiency']:.2f}%", 
+                    text=f"Success! Efficiency: {result['efficiency']:.2f}%", 
                     fg="green"
                 )
                 
@@ -308,6 +308,7 @@ Continue?"""
         
         if not self.results:
             # Empty plot
+            self.fig.subplots_adjust(right=0.95)
             self.ax.text(0.5, 0.5, 'No data yet\nRun experiments to see results', 
                         ha='center', va='center', fontsize=14, color='gray',
                         transform=self.ax.transAxes)
@@ -316,6 +317,8 @@ Continue?"""
             self.ax.set_title('QKD Processing Results', fontsize=14, fontweight='bold')
             self.ax.grid(True, alpha=0.3)
         else:
+            # Keep space on the right for legends to avoid covering points.
+            self.fig.subplots_adjust(right=0.72)
             # Plot all results
             for result in self.results:
                 self.ax.scatter(
@@ -363,13 +366,17 @@ Continue?"""
                 legend1 = self.ax.legend(handles=dataset_handles, 
                                         title="Datasets", 
                                         loc='upper left',
+                                        bbox_to_anchor=(1.02, 1.0),
+                                        borderaxespad=0.0,
                                         fontsize=9)
                 self.ax.add_artist(legend1)
             
             if algo_handles:
                 self.ax.legend(handles=algo_handles, 
                               title="Algorithms", 
-                              loc='upper right',
+                              loc='upper left',
+                              bbox_to_anchor=(1.02, 0.62),
+                              borderaxespad=0.0,
                               fontsize=9)
             
             # Add hover annotations (show on plot)

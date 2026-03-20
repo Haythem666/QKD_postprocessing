@@ -29,6 +29,7 @@ def sifting_chunked(csv_file, chunk_size=1_000_000):
         
     Returns:
         alice_bits, bob_bits as numpy arrays
+        total_rows as total raw bits read from CSV
     """
     print(f"[Bob] Reading CSV in chunks of {chunk_size:,} rows...")
     
@@ -56,7 +57,7 @@ def sifting_chunked(csv_file, chunk_size=1_000_000):
     
     print(f"[Bob] Total: {total_rows:,} rows -> {len(alice_bits):,} sifted bits")
     
-    return alice_bits, bob_bits
+    return alice_bits, bob_bits, total_rows
 
 
 def run_bob_client(server_address='localhost:50051', 
@@ -79,7 +80,7 @@ def run_bob_client(server_address='localhost:50051',
     
     # 1. Load data with chunked sifting
     print(f"\n[Bob] Loading data from {data_file}")
-    alice_bits, bob_bits = sifting_chunked(data_file, chunk_size=chunk_size)
+    alice_bits, bob_bits, total_raw_bits = sifting_chunked(data_file, chunk_size=chunk_size)
     
     np.random.seed(42)
     
@@ -177,7 +178,8 @@ def run_bob_client(server_address='localhost:50051',
     print(f"{'='*70}")
     print(f"Initial sifted bits:    {len(alice_bits):,}")
     print(f"Final secure key:       {final_key_length:,}")
-    print(f"Overall efficiency:     {final_key_length/len(alice_bits)*100:.2f}%")
+    overall_efficiency = (final_key_length / total_raw_bits * 100) if total_raw_bits else 0.0
+    print(f"Overall efficiency:     {overall_efficiency:.2f}%")
     print(f"{'='*70}\n")
 
 

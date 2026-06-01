@@ -45,8 +45,6 @@ class UltimateQKDGUI:
         self.pa_method = tk.StringVar(value="sha256")
         self.pe_sample = tk.DoubleVar(value=0.1)
         
-        # NEW: Comparison mode
-        self.comparison_mode = tk.BooleanVar(value=False)
         
         # Plot axis variables
         self.x_axis = tk.StringVar(value="chunk")
@@ -70,7 +68,7 @@ class UltimateQKDGUI:
         # Presets
         self.presets = {
             'Fast Test': {'chunk': 100_000, 'algo': 'original', 'pa': 'sha256', 'pe': 0.05},
-            'Balanced ⭐': {'chunk': 2_000_000, 'algo': 'yanetal', 'pa': 'sha256', 'pe': 0.10},
+            'Balanced ': {'chunk': 2_000_000, 'algo': 'yanetal', 'pa': 'sha256', 'pe': 0.10},
             'High Quality': {'chunk': 5_000_000, 'algo': 'option8', 'pa': 'sha256', 'pe': 0.15},
             'Theoretical': {'chunk': 2_000_000, 'algo': 'yanetal', 'pa': 'toeplitz', 'pe': 0.10}
         }
@@ -105,7 +103,7 @@ class UltimateQKDGUI:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
         # Title
-        title = tk.Label(scrollable, text="🚀 QKD Ultimate Suite", 
+        title = tk.Label(scrollable, text="QKD Ultimate Suite", 
                         font=("Arial", 16, "bold"), bg="#ecf0f1")
         title.pack(pady=(10, 5))
         
@@ -116,7 +114,7 @@ class UltimateQKDGUI:
         # ───────────────────────────────────────────────────────
         # QUICK PRESETS (NEW!)
         # ───────────────────────────────────────────────────────
-        preset_frame = ttk.LabelFrame(scrollable, text="⚡ Quick Presets", padding="10")
+        preset_frame = ttk.LabelFrame(scrollable, text="Quick Presets", padding="10")
         preset_frame.pack(fill=tk.X, padx=10, pady=(0, 15))
         
         preset_buttons_frame = tk.Frame(preset_frame, bg="white")
@@ -133,14 +131,14 @@ class UltimateQKDGUI:
         # ───────────────────────────────────────────────────────
         # FILE SELECTION
         # ───────────────────────────────────────────────────────
-        file_frame = ttk.LabelFrame(scrollable, text="📁 Dataset", padding="10")
+        file_frame = ttk.LabelFrame(scrollable, text="Dataset", padding="10")
         file_frame.pack(fill=tk.X, padx=10, pady=(0, 15))
         
         self.file_label = tk.Label(file_frame, text="No file selected", 
                                    fg="gray", wraplength=500, justify=tk.LEFT)
         self.file_label.pack(pady=(0, 10))
         
-        browse_btn = tk.Button(file_frame, text="📂 Browse", 
+        browse_btn = tk.Button(file_frame, text="Browse", 
                               command=self.browse_file,
                               bg="#3498db", fg="white", 
                               font=("Arial", 10, "bold"),
@@ -148,9 +146,9 @@ class UltimateQKDGUI:
         browse_btn.pack()
         
         # ───────────────────────────────────────────────────────
-        # CHUNK SIZE SLIDER (NEW!)
+        # CHUNK SIZE SLIDER 
         # ───────────────────────────────────────────────────────
-        chunk_frame = ttk.LabelFrame(scrollable, text="📦 Chunk Size", padding="10")
+        chunk_frame = ttk.LabelFrame(scrollable, text="Chunk Size", padding="10")
         chunk_frame.pack(fill=tk.X, padx=10, pady=(0, 15))
         
         # Current value display
@@ -187,7 +185,7 @@ class UltimateQKDGUI:
         quick_sizes = [
             ("100K", 100_000),
             ("1M", 1_000_000),
-            ("2M ⭐", 2_000_000),
+            ("2M", 2_000_000),
             ("5M", 5_000_000),
             ("10M", 10_000_000)
         ]
@@ -203,12 +201,12 @@ class UltimateQKDGUI:
         # ───────────────────────────────────────────────────────
         # ALGORITHM
         # ───────────────────────────────────────────────────────
-        algo_frame = ttk.LabelFrame(scrollable, text="⚙️ Cascade Algorithm", padding="10")
+        algo_frame = ttk.LabelFrame(scrollable, text="Cascade Algorithm", padding="10")
         algo_frame.pack(fill=tk.X, padx=10, pady=(0, 15))
         
         algo_options = [
             ("original", "Original - 4 passes (fastest)"),
-            ("yanetal", "Yanetal - 10 passes (balanced) ⭐"),
+            ("yanetal", "Yanetal - 10 passes (balanced)"),
             ("option7", "Option7 - 14 passes (good)"),
             ("option8", "Option8 - 14 passes (best efficiency)")
         ]
@@ -221,11 +219,11 @@ class UltimateQKDGUI:
         # ───────────────────────────────────────────────────────
         # PRIVACY AMPLIFICATION
         # ───────────────────────────────────────────────────────
-        pa_frame = ttk.LabelFrame(scrollable, text="🔐 Privacy Amplification", padding="10")
+        pa_frame = ttk.LabelFrame(scrollable, text="Privacy Amplification", padding="10")
         pa_frame.pack(fill=tk.X, padx=10, pady=(0, 15))
         
         pa_options = [
-            ("sha256", "SHA-256 (fast, practical) ⭐"),
+            ("sha256", "SHA-256 (fast, practical)"),
             ("toeplitz", "Toeplitz Matrix (slow, theoretical)")
         ]
         
@@ -235,9 +233,9 @@ class UltimateQKDGUI:
             rb.pack(anchor=tk.W, pady=2)
         
         # ───────────────────────────────────────────────────────
-        # PARAMETER ESTIMATION SLIDER (NEW!)
+        # PARAMETER ESTIMATION SLIDER
         # ───────────────────────────────────────────────────────
-        pe_frame = ttk.LabelFrame(scrollable, text="📊 Parameter Estimation Sample", padding="10")
+        pe_frame = ttk.LabelFrame(scrollable, text="Parameter Estimation Sample", padding="10")
         pe_frame.pack(fill=tk.X, padx=10, pady=(0, 15))
         
         self.pe_display = tk.Label(pe_frame, 
@@ -259,7 +257,7 @@ class UltimateQKDGUI:
         # ───────────────────────────────────────────────────────
         # PLOT CONFIGURATION
         # ───────────────────────────────────────────────────────
-        plot_config = ttk.LabelFrame(scrollable, text="📈 Plot Axes", padding="10")
+        plot_config = ttk.LabelFrame(scrollable, text="Plot Axes", padding="10")
         plot_config.pack(fill=tk.X, padx=10, pady=(0, 15))
         
         tk.Label(plot_config, text="X-axis:", font=("Arial", 9, "bold")).pack(anchor=tk.W)
@@ -277,31 +275,7 @@ class UltimateQKDGUI:
         x_dropdown.bind('<<ComboboxSelected>>', lambda e: self.update_plot())
         y_dropdown.bind('<<ComboboxSelected>>', lambda e: self.update_plot())
         
-        # ───────────────────────────────────────────────────────
-        # COMPARISON MODE (NEW!)
-        # ───────────────────────────────────────────────────────
-        comp_frame = ttk.LabelFrame(scrollable, text="🔄 Comparison Mode", padding="10")
-        comp_frame.pack(fill=tk.X, padx=10, pady=(0, 15))
-        
-        comp_check = ttk.Checkbutton(comp_frame, 
-                                     text="Enable auto-comparison (vary one parameter)",
-                                     variable=self.comparison_mode)
-        comp_check.pack(anchor=tk.W)
-        
-        self.comp_param = tk.StringVar(value="chunk")
-        tk.Label(comp_frame, text="Vary:", font=("Arial", 9)).pack(anchor=tk.W, pady=(10, 5))
-        
-        comp_options = [
-            ("chunk", "Chunk Size"),
-            ("algorithm", "Algorithm"),
-            ("pa_method", "PA Method"),
-            ("pe_sample", "PE Sample")
-        ]
-        
-        for value, text in comp_options:
-            rb = ttk.Radiobutton(comp_frame, text=text,
-                                variable=self.comp_param, value=value)
-            rb.pack(anchor=tk.W, padx=20, pady=1)
+        # Comparison mode removed per user request
         
         # ───────────────────────────────────────────────────────
         # ACTION BUTTONS
@@ -309,7 +283,7 @@ class UltimateQKDGUI:
         button_frame = tk.Frame(scrollable, bg="#ecf0f1")
         button_frame.pack(fill=tk.X, padx=10, pady=(20, 10))
         
-        run_btn = tk.Button(button_frame, text="🚀 RUN EXPERIMENT", 
+        run_btn = tk.Button(button_frame, text="RUN EXPERIMENT", 
                            command=self.run_experiment,
                            bg="#27ae60", fg="white",
                            font=("Arial", 12, "bold"),
@@ -320,14 +294,14 @@ class UltimateQKDGUI:
         secondary_frame = tk.Frame(button_frame, bg="#ecf0f1")
         secondary_frame.pack(fill=tk.X)
         
-        clear_btn = tk.Button(secondary_frame, text="🗑️ Clear", 
+        clear_btn = tk.Button(secondary_frame, text="Clear", 
                              command=self.clear_plot,
                              bg="#e74c3c", fg="white",
                              font=("Arial", 9),
                              cursor="hand2", padx=10, pady=6)
         clear_btn.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
 
-        export_btn = tk.Button(secondary_frame, text="💾 Export",
+        export_btn = tk.Button(secondary_frame, text="Export",
                               command=self.export_results,
                               bg="#2980b9", fg="white",
                               font=("Arial", 9),
@@ -344,7 +318,7 @@ class UltimateQKDGUI:
         # RIGHT PANEL - PLOT
         # ═══════════════════════════════════════════════════════
         
-        plot_title = tk.Label(right_panel, text="📊 Live Results", 
+        plot_title = tk.Label(right_panel, text="Live Results", 
                              font=("Arial", 14, "bold"), bg="white")
         plot_title.pack(pady=(0, 10))
         
@@ -430,11 +404,8 @@ class UltimateQKDGUI:
         if not self.file_path.get():
             messagebox.showerror("Error", "Please select a dataset first!")
             return
-        
-        if self.comparison_mode.get():
-            self.run_comparison()
-        else:
-            self.run_single()
+        # Always run single experiment (comparison mode removed)
+        self.run_single()
     
     def run_single(self):
         """Run single configuration"""
@@ -446,107 +417,20 @@ class UltimateQKDGUI:
             if result:
                 self.results.append(result)
                 self.update_plot()
-                self.status_label.config(text=f"✅ Done! Efficiency: {result['efficiency']:.2f}%", fg="green")
+                self.status_label.config(text=f"Done! Efficiency: {result['efficiency']:.2f}%", fg="green")
             else:
-                self.status_label.config(text="❌ Processing failed", fg="red")
+                self.status_label.config(text="Processing failed", fg="red")
         except Exception as e:
             messagebox.showerror("Error", f"Failed:\n{e}")
-            self.status_label.config(text="❌ Error", fg="red")
+            self.status_label.config(text="Error", fg="red")
     
-    def run_comparison(self):
-        """Run comparison mode - vary one parameter"""
-        param = self.comp_param.get()
-        
-        if param == "chunk":
-            variants = [100_000, 1_000_000, 2_000_000, 5_000_000]
-            original = self.chunk_size.get()
-            # Auto-adjust axes for better visualization
-            suggested_x = "chunk"
-            suggested_y = "time"
-        elif param == "algorithm":
-            variants = ['original', 'yanetal', 'option7', 'option8']
-            original = self.algorithm.get()
-            suggested_x = "time"
-            suggested_y = "efficiency"
-        elif param == "pa_method":
-            variants = ['sha256', 'toeplitz']
-            original = self.pa_method.get()
-            suggested_x = "time"
-            suggested_y = "efficiency"
-        elif param == "pe_sample":
-            variants = [0.05, 0.10, 0.15, 0.20]
-            original = self.pe_sample.get()
-            suggested_x = "qber"
-            suggested_y = "efficiency"
-        
-        # Suggest axes adjustment
-        msg = f"Run {len(variants)} experiments varying {param}?\n\n"
-        msg += f"Suggested axes:\n"
-        msg += f"X: {self.available_metrics[suggested_x]}\n"
-        msg += f"Y: {self.available_metrics[suggested_y]}\n\n"
-        msg += f"Apply suggested axes?"
-        
-        response = messagebox.askyesnocancel("Comparison Mode", msg)
-        
-        if response is None:  # Cancel
-            return
-        elif response is True:  # Yes - apply suggested axes
-            self.x_axis.set(suggested_x)
-            self.y_axis.set(suggested_y)
-        # If No, keep current axes
-        
-        success_count = 0
-        
-        for i, variant in enumerate(variants):
-            self.status_label.config(
-                text=f"Comparison {i+1}/{len(variants)}: {param}={variant}", 
-                fg="orange"
-            )
-            self.root.update()
-            
-            # Set variant
-            if param == "chunk":
-                self.chunk_size.set(variant)
-            elif param == "algorithm":
-                self.algorithm.set(variant)
-            elif param == "pa_method":
-                self.pa_method.set(variant)
-            elif param == "pe_sample":
-                self.pe_sample.set(variant)
-            
-            # Run
-            try:
-                result = self.run_processing_core()
-                if result:
-                    self.results.append(result)
-                    success_count += 1
-                    print(f"✅ Variant {variant}: Efficiency={result['efficiency']:.2f}%, Time={result['time']:.1f}s")
-                    self.update_plot()
-                else:
-                    print(f"❌ Variant {variant}: Processing returned None")
-            except Exception as e:
-                print(f"❌ Variant {variant} failed: {e}")
-                import traceback
-                traceback.print_exc()
-        
-        # Restore original
-        if param == "chunk":
-            self.chunk_size.set(original)
-        elif param == "algorithm":
-            self.algorithm.set(original)
-        elif param == "pa_method":
-            self.pa_method.set(original)
-        elif param == "pe_sample":
-            self.pe_sample.set(original)
-        
-        self.status_label.config(text=f"✅ Comparison complete! {success_count}/{len(variants)} successful", fg="green")
-        messagebox.showinfo("Done", f"Comparison of {param} complete!\n{success_count}/{len(variants)} experiments successful.\n\nCheck console for details.")
+    # Comparison mode removed; single-run only
     
     def run_processing_core(self):
         """Core processing logic (same as before)"""
         cmd = [
             sys.executable,
-            "process_large_file.py",
+            "process_large_file_EXTENDED.py",
             "--data", self.file_path.get(),
             "--chunk", str(self.chunk_size.get()),
             "--algo", self.algorithm.get(),
@@ -570,9 +454,10 @@ class UltimateQKDGUI:
             efficiency_match = re.search(r'Overall efficiency:\s+([\d.]+)%', output)
             final_keys_match = re.search(r'Total final keys:\s+([\d,]+)\s+bits', output)
             time_match = re.search(r'Elapsed time:\s+([\d.]+)\s+seconds', output)
-            qber_match = re.search(r'Average QBER:\s+([\d.]+)%', output)
-            cascade_eff_match = re.search(r'Cascade efficiency:\s+([\d.]+)', output)
-            leaked_match = re.search(r'Total leaked:\s+([\d,]+)', output)
+            # Match actual output from process_large_file.py
+            qber_match = re.search(r'Average QBER:\s+([\d.]+)%', output) or re.search(r'QBER:\s+([\d.]+)%', output) or re.search(r'Estimated QBER:\s+([\d.]+)', output)
+            cascade_eff_match = re.search(r'Cascade.*?Efficiency:\s+([\d.]+)', output, re.S) or re.search(r'Cascade efficiency:\s+([\d.]+)', output)
+            leaked_match = re.search(r'Total leaked:\s+([\d,]+)', output) or re.search(r'Leaked:\s+([\d,]+)', output)
             
             if efficiency_match and final_keys_match:
                 dataset_name = os.path.basename(self.file_path.get())
@@ -602,20 +487,24 @@ class UltimateQKDGUI:
                     'marker': self.algo_markers.get(self.algorithm.get(), 'o')
                 }
                 
-                print(f"\n✅ Parsed result: Efficiency={efficiency:.2f}%, Time={time_val:.1f}s")
+                print(f"\nParsed result: Efficiency={efficiency:.2f}%, Time={time_val:.1f}s")
                 return result_dict
             else:
-                print(f"\n❌ Failed to parse output!")
+                print(f"\nFailed to parse output!")
                 print(f"efficiency_match: {efficiency_match}")
                 print(f"final_keys_match: {final_keys_match}")
-                print(f"\nFull output:\n{output}")
+                print(f"qber_match: {qber_match}")
+                print(f"cascade_eff_match: {cascade_eff_match}")
+                print(f"leaked_match: {leaked_match}")
+                print(f"\nFull output (first 2000 chars):\n{output[:2000]}")
+                messagebox.showerror("Processing Error", "Failed to parse processing output. See console for details.")
                 return None
                 
         except subprocess.TimeoutExpired:
-            print("❌ Timeout after 2 hours")
+            print("Timeout after 2 hours")
             return None
         except Exception as e:
-            print(f"❌ Exception: {e}")
+            print(f"Exception: {e}")
             import traceback
             traceback.print_exc()
             raise e

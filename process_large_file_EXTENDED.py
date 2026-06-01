@@ -77,7 +77,7 @@ def process_large_file(filepath, chunk_size=CHUNK_SIZE, algorithm=CASCADE_ALGORI
         print(f"  Sifted: {len(alice_bits):,} bits")
         
         if len(alice_bits) < 10000:
-            print(f"  ⚠ Too few bits, skipping")
+            print(f"  WARNING: Too few bits, skipping")
             continue
 
         # Parameter Estimation with configurable sample ratio
@@ -91,7 +91,7 @@ def process_large_file(filepath, chunk_size=CHUNK_SIZE, algorithm=CASCADE_ALGORI
         print(f"  QBER: {qber*100:.3f}% (CI: [{qber_low*100:.3f}%, {qber_high*100:.3f}%])")
             
         if qber_high > QBER_THRESHOLD:
-            print(f"  ❌ ABORT: QBER too high")
+            print(f"  ABORT: QBER too high")
             continue
 
         # Cascade Error Correction
@@ -105,7 +105,7 @@ def process_large_file(filepath, chunk_size=CHUNK_SIZE, algorithm=CASCADE_ALGORI
         print(f"  Cascade: {final_errors} errors, {leaked_bits} leaked")
 
         if final_errors > 0:
-            print(f"  ⚠ Errors remain")
+            print(f"  Errors remain")
             continue
             
         # Privacy Amplification - METHOD SELECTION
@@ -141,9 +141,9 @@ def process_large_file(filepath, chunk_size=CHUNK_SIZE, algorithm=CASCADE_ALGORI
             # Verify keys match
             if np.array_equal(alice_sec, bob_sec):
                 total_final_keys += final_len
-                print(f"  ✅ Final key: {final_len:,} bits")
+                print(f"  Final key: {final_len:,} bits")
             else:
-                print(f"  ❌ PA failed: keys differ")
+                print(f"  PA failed: keys differ")
 
     elapsed_time = time.time() - start_time
 
@@ -208,7 +208,7 @@ if __name__ == "__main__":
     if not (0.01 <= args.pe_sample <= 0.30):
         parser.error("--pe-sample must be between 0.01 and 0.30")
     
-    print("\n🚀 Starting extended processing...\n")
+    print("\nStarting extended processing...\n")
     
     process_large_file(
         args.data, 

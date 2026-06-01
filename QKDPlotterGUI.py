@@ -200,12 +200,12 @@ class QKDPlotterGUI:
         
         confirm_text = f"""Run processing with:
 
-📁 Dataset: {dataset_name}
-📦 Chunk: {chunk_name} rows
-⚙️ Algorithm: {self.algorithm.get()}
+    Dataset: {dataset_name}
+    Chunk: {chunk_name} rows
+    Algorithm: {self.algorithm.get()}
 
-This will take some time depending on dataset size.
-Continue?"""
+    This will take some time depending on dataset size.
+    Continue?"""
         
         if not messagebox.askyesno("Confirm Run", confirm_text):
             return

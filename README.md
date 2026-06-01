@@ -16,11 +16,12 @@ The project includes:
 ├── alice_server.py
 ├── bob_client.py
 ├── process_large_file.py
+├── process_large_file_EXTENDED.py
 ├── profile_qkd_processing.py
 ├── qkd_grpc_cascade.proto
 ├── qkd_profile.prof
 ├── QKDPlotterGUI.py
-├── small_portion_test.py
+├── QKD_ultimate_GUI.py
 ├── qkd/
 │   ├── __init__.py
 │   ├── cascade_wrapper.py
@@ -55,7 +56,7 @@ The project includes:
 
 ### 4. Data & Analysis Utilities
 - `process_large_file.py`: Processing workflow for large input datasets.
-- `small_portion_test.py`: Lightweight test/debug run on smaller subsets.
+- `process_large_file_EXTENDED.py`: Extended/alternative processing pipeline with additional options.
 - `profile_qkd_processing.py`: Profiling entry point for performance analysis.
 - `qkd_profile.prof`: Example/generated profiler output.
 
@@ -99,16 +100,18 @@ Adjust this list according to actual imports in your local version.
 
 ## Typical Workflows
 
-### Run a small pipeline test
+### Run a quick pipeline test
+
+Use a small dataset from `raw_data/` with the processing script. For example:
 
 ```bash
-python small_portion_test.py
+python process_large_file.py --input raw_data/parsed_qkd_data_partial_1k.csv
 ```
 
 ### Process a larger dataset
 
 ```bash
-python process_large_file.py
+python process_large_file_EXTENDED.py --input raw_data/parsed_qkd_data_partial_1M.csv
 ```
 
 ### Launch gRPC server/client example
